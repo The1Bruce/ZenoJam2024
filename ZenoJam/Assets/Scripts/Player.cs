@@ -5,6 +5,9 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    public GameObject Crosshair;
+    public float crosshairRadius = 2f;
+    
     public float movementSpeed = 10f;
     public float rotationSpeed = 10f;
     public float jumpForce = 10f;
@@ -16,6 +19,7 @@ public class Player : MonoBehaviour
     private float curmovementSpeed;
     private float horizontal;
     private Vector2 moveForce;
+    private Vector2 curs;
     private float camera;
     private float vertical;
     private float speed = 10f;
@@ -49,7 +53,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        interact(); 
+        interact();
+        curs = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         PlayerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         
       //  moving();
@@ -65,6 +70,7 @@ public class Player : MonoBehaviour
             forceToApply = Vector2.zero;
         }
 
+        Crosshair.transform.position =curs;
 
         rb.velocity = moveForce;
     }
@@ -110,6 +116,7 @@ public class Player : MonoBehaviour
     {
         if (collision.collider.CompareTag("Enemy"))
         {
+            
             Debug.Log("Enemy");
             Vector2 direction = transform.position - collision.collider.gameObject.transform.position;
 
