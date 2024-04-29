@@ -15,14 +15,14 @@ public class Player : MonoBehaviour
     private float initialmovementSpeed;
     private float curmovementSpeed;
     private float horizontal;
-    private float up;
+    private Vector2 moveForce;
     private float camera;
     private float vertical;
     private float speed = 10f;
     private float normalizer = 10f;
     private bool toggle;
     public Vector2 forceToApply = new Vector2(0,0);
-    public float forceDamping;
+    public float forceDamping = .08f;
 
 
 
@@ -57,12 +57,21 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        rb.velocity = PlayerInput * movementSpeed;
+        moveForce = PlayerInput * movementSpeed;
+        moveForce += forceToApply;
+        forceToApply /= forceDamping;
+        if (Mathf.Abs(forceToApply.x) <= 0.01f && Mathf.Abs(forceToApply.y) <= 0.01f)
+        {
+            forceToApply = Vector2.zero;
+        }
+
+
+        rb.velocity = moveForce;
     }
     private void moving()
         {
             horizontal = Input.GetAxis("Horizontal");
-            up = Input.GetAxis("Jump");
+            //up = Input.GetAxis("Jump");
 
             vertical = Input.GetAxis("Vertical");
 
@@ -97,10 +106,20 @@ public class Player : MonoBehaviour
 
         }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Enemy"))
+        {
+            Debug.Log("Enemy");
+            Vector2 direction = transform.position - collision.collider.gameObject.transform.position;
 
-
-
-
+            forceToApply += direction*10;
+            
+        }
     }
+
+
+
+}
 
     
